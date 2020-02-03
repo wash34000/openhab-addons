@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="openmotics"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd"><bridge-type id="masterBridge">
+		<label>OpenMotics Gateway</label>
+		<description>Access point to the Openmotics home automation system</description>
+
+		<channels>
+            <channel id="state" typeId="state" />
+		</channels>
+		
+		<representation-property>uniqueId</representation-property>
+
+		<config-description>
+            <parameter name="masterAddress" type="text" required="true">
+                <label>Network address</label>
+                <description>IP address of the Openmotics Gateway</description>
+            </parameter>
+            <parameter name="user" type="text" required="true">
+                <label>User Name</label>
+                <description>the user name to log in to the Openmotics Gateway</description>
+            </parameter>
+            <parameter name="password" type="text" required="true">
+                <context>password</context>
+                <label>Password</label>
+                <description>the user password to log in to the Openmotics Gateway</description>
+            </parameter>
+            <parameter name="refreshInterval" type="integer">
+                <label>Polling rate</label>
+                <description>polling rate</description>
+            </parameter>
+        </config-description>
+	</bridge-type><bridge-type id="energyBridge">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="masterBridge" />
+        </supported-bridge-type-refs>
+
+        <label>OpenMotics Power module</label>
+        <description>Give all power mesure</description>
+        
+        <representation-property>uniqueId</representation-property>
+        
+        <config-description>
+            <parameter name="integrationId" type="integer" required="false">
+                <label>Integration ID</label>
+                <description>identifier of the the device</description>
+            </parameter>
+        </config-description>
+    </bridge-type><thing-type id="energy">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="energyBridge" />
+        </supported-bridge-type-refs>
+
+        <label>Openmotics energy channel</label>
+        <description>Measure V,f,I,W</description>
+
+        <channels>
+            <channel id="voltage" typeId="voltageEnergyData" />
+            <channel id="frequency" typeId="frequencyEnergyData" />
+            <channel id="current" typeId="currentEnergyData" />
+            <channel id="power" typeId="powerEnergyData" />
+        </channels>
+        
+        <representation-property>uniqueId</representation-property>
+
+        <config-description>
+            <parameter name="integrationId" type="integer" required="false">
+                <label>Integration ID</label>
+                <description>identifier of the the device</description>
+            </parameter>
+            <parameter name="input" type="text" required="false">
+                <label>Name</label>
+                <description>channel name</description>
+            </parameter>            
+            <parameter name="sensor" type="integer" required="false">
+                <label>Max current</label>
+                <description>sensibility of the connected clamp</description>
+                <options>
+                    <option value="2">12,5 A</option>
+                    <option value="3">25 A</option>
+                    <option value="4">50 A</option>
+                    <option value="5">100 A</option>
+                    <option value="6">200 A</option>
+                    <option value="7">400 A</option>
+                </options>
+            </parameter>            
+            <parameter name="isInverted" type="boolean" required="false">
+                <label>Is inverted?</label>
+                <description>true if the current has to be reversed</description>
+            </parameter>            
+        </config-description>
+    </thing-type><bridge-type id="outputBridge">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="masterBridge" />
+        </supported-bridge-type-refs>
+
+        <label>OpenMotics Output controller</label>
+        <description>Send state to output</description>
+        
+        <representation-property>uniqueId</representation-property>
+    </bridge-type><thing-type id="output">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="outputBridge" />
+        </supported-bridge-type-refs>
+
+        <label>OpenMotics output</label>
+        <description>On/off switch</description>
+
+        <channels>
+            <channel id="switchstatus" typeId="switchstatus" />
+        </channels>
+        
+        <representation-property>uniqueId</representation-property>
+
+        <config-description>
+            <parameter name="integrationId" type="integer" required="false">
+                <label>Integration ID</label>
+                <description>identifier of the the device</description>
+            </parameter>
+
+            <parameter name="name" type="text" required="false">
+                <label>Name</label>
+                <description>output name</description>
+            </parameter>
+            <parameter name="room" type="integer" required="false">
+                <label>Room</label>
+                <description>room location</description>
+            </parameter>
+            <parameter name="floor" type="integer" required="false">
+                <label>Floor</label>
+                <description>floor number</description>
+            </parameter>
+            <parameter name="timer" type="integer" required="false">
+                <label>Timer</label>
+                <description>timer value</description>
+            </parameter>
+            <parameter name="isLight" type="boolean" required="false">
+                <label>Is a light?</label>
+                <description>is this a light or a generic relay?</description>
+            </parameter>
+        </config-description>
+    </thing-type><thing-type id="dimmer">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="outputBridge" />
+        </supported-bridge-type-refs>
+
+        <label>Openmotics dimmer</label>
+        <description>Dimmer</description>
+
+        <channels>
+            <channel id="switchstatus" typeId="switchstatus" />
+            <channel id="dimmerlevel" typeId="dimmerlevel" />        
+        </channels>
+        
+        <representation-property>uniqueId</representation-property>
+
+        <config-description>
+            <parameter name="integrationId" type="integer" required="false">
+                <label>Integration ID</label>
+                <description>Address of the dimmer in the Openmotics system</description>
+            </parameter>
+
+            <parameter name="name" type="text" required="false">
+                <label>Name</label>
+                <description>dimmer name</description>
+            </parameter>
+            <parameter name="room" type="integer" required="false">
+                <label>Room</label>
+                <description>room location</description>
+            </parameter>
+            <parameter name="floor" type="integer" required="false">
+                <label>Floor</label>
+                <description>floor number</description>
+            </parameter>
+            <parameter name="timer" type="integer" required="false">
+                <label>Timer</label>
+                <description>timer value</description>
+            </parameter>
+            <parameter name="isLight" type="boolean" required="false">
+                <label>Is a light?</label>
+                <description>is this a light or a generic relay?</description>
+            </parameter>
+        </config-description>
+    </thing-type><bridge-type id="sensorBridge">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="masterBridge" />
+        </supported-bridge-type-refs>
+
+        <label>OpenMotics Sensor controller</label>
+        <description>Receive data from house sensors</description>
+        
+        <representation-property>uniqueId</representation-property>
+    </bridge-type><thing-type id="sensor">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="sensorBridge" />
+        </supported-bridge-type-refs>
+
+        <label>Openmotics sensor</label>
+        <description>Measure temperature, humidity, luminosity</description>
+
+<!--         <channels> -->
+<!--             <channel id="temperature" typeId="temperatureSensorData"/> -->
+<!--             <channel id="humidity" typeId="humiditySensorData"/> -->
+<!--             <channel id="luminosity" typeId="luminositySensorData"/> -->
+<!--         </channels> -->
+        
+        <representation-property>uniqueId</representation-property>
+
+        <config-description>
+            <parameter name="integrationId" type="integer" required="false">
+                <label>Integration ID</label>
+                <description>identifier of the the device</description>
+            </parameter>
+
+            <parameter name="name" type="text" required="false">
+                <label>Name</label>
+                <description>sensor name</description>
+            </parameter>
+            <parameter name="room" type="integer" required="false">
+                <label>Room</label>
+                <description>room location</description>
+            </parameter>
+            <parameter name="virtual" type="boolean" required="false">
+                <label>Virtual?</label>
+                <description>is this a virtual sensor?</description>
+            </parameter>
+            <parameter name="offset" type="decimal" min="-7.5" max="7.5" step="0.5" required="false">
+                <label>OffSet temperature</label>
+                <description>set the offset of the temperature sensor</description>
+            </parameter>
+        </config-description>
+    </thing-type><bridge-type id="thermostatBridge">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="masterBridge" />
+        </supported-bridge-type-refs>
+
+        <label>OpenMotics Thermostat controller</label>
+        <description>Control house temperature</description>
+
+        <channels>
+            <channel id="cooling" typeId="cooling" />
+        </channels>
+        
+        <representation-property>uniqueId</representation-property>
+    </bridge-type><thing-type id="thermostat">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="thermostatBridge" />
+        </supported-bridge-type-refs>
+
+        <label>Openmotics thermostat</label>
+        <description>Thermostat</description>
+
+        <channels>
+            <channel id="mode" typeId="mode" />
+            <channel id="targetTemp" typeId="targetTemp" />
+
+            <channel id="presetTempAutoDay1" typeId="targetTemp" >
+            	<label>TempAutoDay1</label></channel>
+            <channel id="presetTempAutoNight" typeId="targetTemp" />
+            <channel id="presetTempAutoDay2" typeId="targetTemp" />
+            <channel id="presetTempAway" typeId="targetTemp" />
+            <channel id="presetTempVacation" typeId="targetTemp" />
+            <channel id="presetTempParty" typeId="targetTemp" />
+        </channels>
+
+        
+        <representation-property>uniqueId</representation-property>
+
+        <config-description>
+            <parameter-group name="PID_parameters">
+                <label>PID parameters</label>
+                <description>PID parameters</description>
+                <advanced>true</advanced>
+            </parameter-group>
+
+            <parameter name="integrationId" type="integer" required="false">
+                <label>Integration ID</label>
+                <description>identifier of the the device</description>
+            </parameter>
+
+            <parameter name="name" type="text" required="false">
+                <label>Name</label>
+                <description>thermostat name</description>
+            </parameter>
+            <parameter name="room" type="integer" required="false">
+                <label>Room</label>
+                <description>room location</description>
+            </parameter>
+            <parameter name="sensor" type="integer" required="false">
+                <label>Sensor</label>
+                <description>id of the sensor</description>
+            </parameter>
+
+            <parameter name="output0" type="integer" required="false">
+                <label>Output0</label>
+                <description>Primary valve</description>
+            </parameter>
+            <parameter name="output1" type="integer" required="false">
+                <label>Output1</label>
+                <description>secondary valve</description>
+            </parameter>
+
+            <parameter name="pid_p" type="integer" required="false" groupName="PID_parameters">
+                <label>PID - proportional</label>
+                <description>Proportional coefficient for PID</description>
+            </parameter>
+            <parameter name="pid_i" type="integer" required="false" groupName="PID_parameters">
+                <label>PID - integral</label>
+                <description>Integral coefficient for PID</description>
+            </parameter>
+
+            <parameter name="pid_d" type="integer" required="false" groupName="PID_parameters">
+                <label>PID - derivative</label>
+                <description>Derivative coefficient for PID</description>
+            </parameter>
+            <parameter name="pid_int" type="integer" required="false" groupName="PID_parameters">
+                <label>PID - integral threshold</label>
+                <description>Integral threshold for integral (PID)</description>
+            </parameter>
+
+        </config-description>
+    </thing-type><bridge-type id="inputBridge">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="masterBridge" />
+        </supported-bridge-type-refs>
+
+        <label>OpenMotics Input controller</label>
+        <description>Receive input from house switches</description>
+        
+        <representation-property>uniqueId</representation-property>
+    </bridge-type>
+	
+	<thing-type id="input">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="inputBridge" />
+        </supported-bridge-type-refs>
+
+        <label>Openmotics input</label>
+        <description>Openmotics input</description>
+        
+        <representation-property>uniqueId</representation-property>
+
+        <config-description>
+            <parameter name="name" type="text" required="false">
+                <label>Name</label>
+                <description>input name</description>
+            </parameter>
+            <parameter name="room" type="integer" required="false">
+                <label>Room</label>
+                <description>room location</description>
+            </parameter>
+            <parameter name="action" type="integer" required="false">
+                <label>Action</label>
+                <description>action type</description>
+            </parameter>
+        </config-description>
+    </thing-type><bridge-type id="shutterBridge">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="masterBridge" />
+		</supported-bridge-type-refs>
+		<label>OpenMotics Shutter controller</label>
+		<description>Send position to shutter</description>
+		<representation-property>uniqueId</representation-property>
+</bridge-type>
+	<thing-type id="shutter">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="shutterBridge" />
+		</supported-bridge-type-refs>
+		<label>OpenMotics shutter</label>
+		<description>Up/Stop/Down switch</description>
+		<channels>
+			<channel typeId="shutterState" id="shutterState"></channel>
+		</channels>
+		<representation-property>uniqueId</representation-property>
+		<config-description>
+			<parameter name="integrationId" type="integer" required="false">
+				<label>Integration ID</label>
+				<description>identifier of the the device</description>
+			</parameter>
+			<parameter name="name" type="text" required="false">
+				<label>Name</label>
+				<description>shutter name</description></parameter>
+			<parameter name="room" type="integer" required="false">
+				<label>Room</label>
+				<description>room location</description></parameter>
+			<parameter name="group1" type="integer" required="false">
+				<label>First group</label>
+				<description>first shutter group Id</description></parameter>
+			<parameter name="group2" type="integer" required="false">
+				<label>Second group</label>
+				<description>second shutter group Id</description></parameter>
+			<parameter name="timerUp" type="integer" required="false">
+				<label>Time to open</label>
+				<description>time in second to completly open the shutter</description></parameter>
+			<parameter name="timerDown" type="integer" required="false">
+				<label>Time to close</label>
+				<description>time in second to completly close the shutter</description></parameter></config-description>
+	</thing-type>
+	<channel-type id="state">
+		<item-type>String</item-type>
+		<label>State</label>
+		<description>State of the Master controller.</description>
+	</channel-type><channel-type id="voltageEnergyData">
+        <item-type>Number:ElectricPotential</item-type>
+        <label>Voltage from energy module</label>
+        <description>voltage from energy module</description>
+        <state readOnly="true" pattern="%.1f %unit%" />
+    </channel-type><channel-type id="frequencyEnergyData">
+        <item-type>Number:Frequency</item-type>
+        <label>Frequency from energy module</label>
+        <description>frequency from energy module</description>
+        <state readOnly="true" pattern="%.1f %unit%" />
+    </channel-type><channel-type id="currentEnergyData">
+        <item-type>Number:ElectricCurrent</item-type>
+        <label>Current from energy module</label>
+        <description>current from energy module</description>
+        <state readOnly="true" pattern="%.2f %unit%" />
+    </channel-type><channel-type id="powerEnergyData">
+        <item-type>Number:Power</item-type>
+        <label>Power from energy module</label>
+        <description>power from energy module</description>
+        <state readOnly="true" pattern="%.1f %unit%" />
+    </channel-type><channel-type id="switchstatus">
+        <item-type>Switch</item-type>
+        <label>Switch State</label>
+        <description>On/off status of the switch</description>
+        <category>Switch</category>
+    </channel-type>
+	<channel-type id="shutterState">
+		<item-type>Rollershutter</item-type>
+		<label>Shutter State</label>
+		<description>Up/Down, StopMove, Percent state of shutter</description>
+		<category>Rollershutter</category>
+	</channel-type>
+	<channel-type id="dimmerlevel">
+        <item-type>Dimmer</item-type>
+        <label>Dimmer Level</label>
+        <description>Level of the dimmer</description>
+        <category>DimmableLight</category>
+    </channel-type><channel-type id="temperatureSensorData">
+        <item-type>Number:Temperature</item-type>
+        <label>Temperature from a sensor</label>
+        <description>temperature from a sensor</description>
+        <category>Temperature</category>
+        <state readOnly="true" pattern="%.1f %unit%" />
+    </channel-type><channel-type id="humiditySensorData">
+        <item-type>Number:Dimensionless</item-type>
+        <label>Humidity from a sensor</label>
+        <description>humidity from a sensor</description>
+        <state readOnly="true" pattern="%.1f %unit%" />
+    </channel-type><channel-type id="luminositySensorData">
+        <item-type>Number:Dimensionless</item-type>
+        <label>Brightness from a sensor</label>
+        <description>brightness from a sensor</description>
+        <state readOnly="true" pattern="%.1f %unit%" />
+    </channel-type><channel-type id="cooling">
+        <item-type>Switch</item-type>
+        <label>Cooling mode</label>
+        <description>Global Heating/cooling setup</description>
+        <category>Switch</category>
+    </channel-type><channel-type id="mode">
+        <item-type>Number</item-type>
+        <label>Mode</label>
+        <description>Operating mode.</description>
+    </channel-type><channel-type id="targetTemp">
+        <item-type>Number:Temperature</item-type>
+        <label>Target temperature</label>
+        <description>Target temperature</description>
+        <category>Temperature</category>
+        <state pattern="%.1f %unit%" min="10" max="35" step="0.5" />        
+    </channel-type>
+
+</thing:thing-descriptions>
